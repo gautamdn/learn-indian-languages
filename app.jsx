@@ -1,5 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Volume2, Star, Award, Home, Book, Gamepad2, Trophy, Settings, CheckCircle, Circle, Play, RotateCcw, ArrowRight } from 'lucide-react';
+const { useState, useEffect } = React;
+
+// Simple icon components to replace lucide-react
+const Icon = ({ children, className = '', size = 24 }) => (
+  <span className={className} style={{ fontSize: size, lineHeight: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+    {children}
+  </span>
+);
+const Volume2 = ({ className, size }) => <Icon className={className} size={size}>🔊</Icon>;
+const Star = ({ className, size }) => <Icon className={className} size={size}>⭐</Icon>;
+const Award = ({ className, size }) => <Icon className={className} size={size}>🏅</Icon>;
+const Book = ({ className, size }) => <Icon className={className} size={size}>📖</Icon>;
+const Gamepad2 = ({ className, size }) => <Icon className={className} size={size}>🎮</Icon>;
+const Trophy = ({ className, size }) => <Icon className={className} size={size}>🏆</Icon>;
+const CheckCircle = ({ className, size }) => <Icon className={className} size={size}>✅</Icon>;
+const RotateCcw = ({ className, size }) => <Icon className={className} size={size}>🔄</Icon>;
 
 const LanguageLearningApp = () => {
   const [currentView, setCurrentView] = useState('home');
@@ -219,7 +233,7 @@ const LanguageLearningApp = () => {
               </div>
             )}
             <div className="text-9xl mb-6">
-              {item.emoji || <Circle size={100} className="text-white" style={{color: item.color}} />}
+              {item.emoji || <span style={{display:'inline-block', width:100, height:100, borderRadius:'50%', backgroundColor: item.color, border: '3px solid white'}}></span>}
               {item.number && <div className="text-white font-bold">{item.number}</div>}
             </div>
             <div className="text-4xl font-bold text-white mb-3">{item.english}</div>
@@ -575,7 +589,6 @@ const LanguageLearningApp = () => {
             <p className="text-xl text-purple-400">
               Choose a category to start learning!
             </p>
-            </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <div className="bg-white rounded-full px-6 py-3 shadow-lg flex items-center gap-2">
                 <Star className="text-yellow-500 fill-yellow-500" />
@@ -694,4 +707,4 @@ const LanguageLearningApp = () => {
   );
 };
 
-export default LanguageLearningApp;
+ReactDOM.createRoot(document.getElementById('root')).render(<LanguageLearningApp />);
