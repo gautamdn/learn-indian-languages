@@ -26,6 +26,8 @@ const LanguageLearningApp = () => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [showInterestPicker, setShowInterestPicker] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState('priya');
+  const [ttsSource, setTtsSource] = useState(null); // 'sarvam' | 'browser' | null
 
   // Load progress from localStorage
   useEffect(() => {
@@ -274,6 +276,13 @@ const LanguageLearningApp = () => {
 
   // Audio cache to avoid repeated API calls for the same word
   const audioCache = React.useRef({});
+  const ttsSourceTimer = React.useRef(null);
+
+  const flashTtsSource = (source) => {
+    setTtsSource(source);
+    if (ttsSourceTimer.current) clearTimeout(ttsSourceTimer.current);
+    ttsSourceTimer.current = setTimeout(() => setTtsSource(null), 2000);
+  };
 
   const speakWithBrowserTTS = (text, lang) => {
     if ('speechSynthesis' in window) {
@@ -282,6 +291,7 @@ const LanguageLearningApp = () => {
       utterance.lang = langMap[lang] || 'hi-IN';
       utterance.rate = 0.8;
       window.speechSynthesis.speak(utterance);
+      flashTtsSource('browser');
     }
   };
 
@@ -290,12 +300,13 @@ const LanguageLearningApp = () => {
     const langCode = langMap[lang];
     if (!langCode) return;
 
-    const cacheKey = `${langCode}:${text}`;
+    const cacheKey = `${langCode}:${text}:${selectedVoice}`;
 
     // Check cache first
     if (audioCache.current[cacheKey]) {
       const audio = new Audio(audioCache.current[cacheKey]);
       audio.play().catch(() => speakWithBrowserTTS(text, lang));
+      flashTtsSource('sarvam');
       return;
     }
 
@@ -303,7 +314,7 @@ const LanguageLearningApp = () => {
       const res = await fetch('/.netlify/functions/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, language_code: langCode }),
+        body: JSON.stringify({ text, language_code: langCode, speaker: selectedVoice }),
       });
 
       if (!res.ok) throw new Error('API error');
@@ -316,6 +327,7 @@ const LanguageLearningApp = () => {
 
       const audio = new Audio(audioUrl);
       audio.play().catch(() => speakWithBrowserTTS(text, lang));
+      flashTtsSource('sarvam');
     } catch (err) {
       // Fallback to browser TTS
       speakWithBrowserTTS(text, lang);
@@ -433,7 +445,7 @@ const LanguageLearningApp = () => {
                   <div className={`${selectedLanguage === 'all' ? 'text-4xl' : 'text-6xl'} font-bold text-white`}>{item.kannada}</div>
                   <button
                     onClick={(e) => handleSpeak(e, item.kannadaSound, 'kannada')}
-                    className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition-colors"
+                    className={`p-2 rounded-full transition-all duration-300 ${ttsSource === 'sarvam' ? 'bg-green-400/50 ring-2 ring-green-300' : ttsSource === 'browser' ? 'bg-orange-400/50 ring-2 ring-orange-300' : 'bg-white/20 hover:bg-white/30'}`}
                   >
                     <Volume2 className="w-6 h-6 text-white" />
                   </button>
@@ -448,7 +460,7 @@ const LanguageLearningApp = () => {
                   <div className={`${selectedLanguage === 'all' ? 'text-4xl' : 'text-6xl'} font-bold text-white`}>{item.hindi}</div>
                   <button
                     onClick={(e) => handleSpeak(e, item.hindiSound, 'hindi')}
-                    className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition-colors"
+                    className={`p-2 rounded-full transition-all duration-300 ${ttsSource === 'sarvam' ? 'bg-green-400/50 ring-2 ring-green-300' : ttsSource === 'browser' ? 'bg-orange-400/50 ring-2 ring-orange-300' : 'bg-white/20 hover:bg-white/30'}`}
                   >
                     <Volume2 className="w-6 h-6 text-white" />
                   </button>
@@ -463,7 +475,7 @@ const LanguageLearningApp = () => {
                   <div className={`${selectedLanguage === 'all' ? 'text-4xl' : 'text-6xl'} font-bold text-white`}>{item.gujarati}</div>
                   <button
                     onClick={(e) => handleSpeak(e, item.gujaratiSound, 'gujarati')}
-                    className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition-colors"
+                    className={`p-2 rounded-full transition-all duration-300 ${ttsSource === 'sarvam' ? 'bg-green-400/50 ring-2 ring-green-300' : ttsSource === 'browser' ? 'bg-orange-400/50 ring-2 ring-orange-300' : 'bg-white/20 hover:bg-white/30'}`}
                   >
                     <Volume2 className="w-6 h-6 text-white" />
                   </button>
@@ -658,7 +670,7 @@ const LanguageLearningApp = () => {
             </div>
           </div>
 
-          <div className="mb-6 flex justify-center">
+          <div className="mb-6 flex flex-wrap justify-center gap-3 items-center">
             <select
               value={selectedLanguage}
               onChange={(e) => setSelectedLanguage(e.target.value)}
@@ -670,6 +682,25 @@ const LanguageLearningApp = () => {
               <option value="hindi">हिन्दी Hindi</option>
               <option value="gujarati">ગુજરાતી Gujarati</option>
             </select>
+            <select
+              value={selectedVoice}
+              onChange={(e) => { setSelectedVoice(e.target.value); audioCache.current = {}; }}
+              className="px-4 py-3 rounded-full text-base font-semibold bg-white text-indigo-600 shadow-lg border-2 border-indigo-300 focus:border-indigo-500 focus:outline-none cursor-pointer"
+            >
+              <option value="priya">🎙 Priya (Female)</option>
+              <option value="kavya">🎙 Kavya (Female)</option>
+              <option value="ritu">🎙 Ritu (Female)</option>
+              <option value="shreya">🎙 Shreya (Female)</option>
+              <option value="shubh">🎙 Shubh (Male)</option>
+              <option value="aditya">🎙 Aditya (Male)</option>
+              <option value="rohan">🎙 Rohan (Male)</option>
+              <option value="kabir">🎙 Kabir (Male)</option>
+            </select>
+            {ttsSource && (
+              <span className={`px-3 py-1 rounded-full text-xs font-bold transition-opacity duration-300 ${ttsSource === 'sarvam' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                {ttsSource === 'sarvam' ? '✓ Sarvam AI' : '⚠ Browser TTS'}
+              </span>
+            )}
           </div>
 
           <FlashCard 

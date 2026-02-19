@@ -22,11 +22,12 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: JSON.stringify({ error: 'API key not configured' }) };
   }
 
-  let text, language_code;
+  let text, language_code, speaker;
   try {
     const body = JSON.parse(event.body);
     text = body.text;
     language_code = body.language_code;
+    speaker = body.speaker;
   } catch (e) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid request body' }) };
   }
@@ -40,11 +41,14 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Unsupported language' }) };
   }
 
+  const allowedSpeakers = ['shubh', 'aditya', 'ritu', 'priya', 'neha', 'rahul', 'pooja', 'rohan', 'simran', 'kavya', 'amit', 'dev', 'ishita', 'shreya', 'kabir', 'roopa'];
+  const selectedSpeaker = allowedSpeakers.includes(speaker) ? speaker : 'priya';
+
   const payload = JSON.stringify({
     text: text,
     target_language_code: language_code,
     model: 'bulbul:v3',
-    speaker: 'shubh',
+    speaker: selectedSpeaker,
     pace: 0.9,
     speech_sample_rate: 22050,
     output_audio_codec: 'mp3',
