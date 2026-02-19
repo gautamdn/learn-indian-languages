@@ -272,13 +272,53 @@ const LanguageLearningApp = () => {
     localStorage.setItem('indianLanguagesInterests', JSON.stringify(interests));
   };
 
-  const speak = (text, lang) => {
+  // Audio cache to avoid repeated API calls for the same word
+  const audioCache = React.useRef({});
+
+  const speakWithBrowserTTS = (text, lang) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       const langMap = { kannada: 'kn-IN', hindi: 'hi-IN', gujarati: 'gu-IN' };
       utterance.lang = langMap[lang] || 'hi-IN';
       utterance.rate = 0.8;
       window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const speak = async (text, lang) => {
+    const langMap = { kannada: 'kn-IN', hindi: 'hi-IN', gujarati: 'gu-IN' };
+    const langCode = langMap[lang];
+    if (!langCode) return;
+
+    const cacheKey = `${langCode}:${text}`;
+
+    // Check cache first
+    if (audioCache.current[cacheKey]) {
+      const audio = new Audio(audioCache.current[cacheKey]);
+      audio.play().catch(() => speakWithBrowserTTS(text, lang));
+      return;
+    }
+
+    try {
+      const res = await fetch('/.netlify/functions/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, language_code: langCode }),
+      });
+
+      if (!res.ok) throw new Error('API error');
+
+      const data = await res.json();
+      const audioUrl = `data:audio/mp3;base64,${data.audio}`;
+
+      // Cache the audio data URL
+      audioCache.current[cacheKey] = audioUrl;
+
+      const audio = new Audio(audioUrl);
+      audio.play().catch(() => speakWithBrowserTTS(text, lang));
+    } catch (err) {
+      // Fallback to browser TTS
+      speakWithBrowserTTS(text, lang);
     }
   };
 
