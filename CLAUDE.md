@@ -31,7 +31,7 @@ The app must support **3 languages** — these are the priority:
 |----------|--------|----------|--------|
 | Kannada | ಕನ್ನಡ | `kn-IN` | Done |
 | Hindi | हिन्दी | `hi-IN` | Done |
-| Gujarati | ગુજરાતી | `gu-IN` | Not yet added |
+| Gujarati | ગુજરાતી | `gu-IN` | Done |
 
 ### Word Data Structure
 
@@ -46,17 +46,13 @@ Each vocabulary item follows this pattern:
 }
 ```
 
-### Adding Gujarati
+### Language Selection
 
-When adding Gujarati support:
-1. Add `gujarati` and `gujaratiSound` fields to every item in every category
-2. Update `speak()` to handle `'gujarati'` → `'gu-IN'`
-3. Add Gujarati toggle button in `CategoryView`
-4. Show Gujarati in the FlashCard back face
-5. Support Gujarati in the matching game word selection
-6. Update homepage subtitle to remove "Coming Soon"
+`selectedLanguage` state controls which languages are shown. Values: `'all'`, `'kannada'`, `'hindi'`, `'gujarati'`. Default is `'all'`. A `<select>` dropdown in `CategoryView` lets users switch. The `speak()` function uses a language map to resolve TTS codes.
 
-See `ADDING_LANGUAGES.md` for detailed vocabulary reference and code examples.
+### Adding More Languages
+
+Follow the same pattern: add `{lang}` and `{lang}Sound` fields to every item, add an `<option>` to the dropdown, add a conditional block in FlashCard, and update the `langMap` in `speak()`. See `ADDING_LANGUAGES.md` for reference.
 
 ## Categories
 
@@ -67,23 +63,34 @@ See `ADDING_LANGUAGES.md` for detailed vocabulary reference and code examples.
 - `LanguageLearningApp` — Root component, manages state and routing via `currentView`
 - `FlashCard` — Tap-to-flip card showing English front / translations back
 - `MatchingGame` — Memory card matching game (emoji ↔ word)
-- `CategoryView` — Practice view with flashcards + language toggles
+- `CategoryView` — Practice view with flashcards + language dropdown
 - `ProgressDashboard` — Stats overview (stars, words learned, per-category bars)
-- `HomePage` — Category grid, star count, tips for parents
+- `HomePage` — "For You" horizontal scroll strip, category grid, star count, tips for parents
+- `InterestPicker` — Full-screen interest tag selection (first launch + "Change Interests")
 
 ## Routing
 
-No router library. `currentView` state string controls which component renders:
+No router library. `showInterestPicker` boolean takes priority (overlays everything). Otherwise `currentView` state string controls which component renders:
 - `'home'` → HomePage
 - `'progress'` → ProgressDashboard
 - `'game-{categoryKey}'` → MatchingGame
 - Any category key (e.g. `'animals'`) → CategoryView
 
+## Interest Tags
+
+7 curated interest tags (`interestTags` array) map cross-category word subsets. Each tag has `id`, `emoji`, `label`, `color`, and `words` (array of `[categoryKey, englishName]` pairs). `resolveInterestWords()` resolves references to actual item objects at runtime. The "For You" section on HomePage shows a deduplicated, day-stable-shuffled set of up to 20 cards from selected interests.
+
 ## Data Persistence
 
-`localStorage` key: `kannadaHindiProgress`
+Two `localStorage` keys:
+- `indianLanguagesProgress` — Progress, stars, streak (migrated from old `kannadaHindiProgress` key)
+- `indianLanguagesInterests` — Array of selected interest tag IDs
+
 ```javascript
+// Progress
 { progress: { "animals-0": true, ... }, totalStars: 25, dailyStreak: 5, lastUpdated: "..." }
+// Interests
+["animals_nature", "yummy_food", "my_family"]
 ```
 
 ## Deployment
