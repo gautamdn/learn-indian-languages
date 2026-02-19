@@ -444,7 +444,7 @@ const LanguageLearningApp = () => {
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <div className={`${selectedLanguage === 'all' ? 'text-4xl' : 'text-6xl'} font-bold text-white`}>{item.kannada}</div>
                   <button
-                    onClick={(e) => handleSpeak(e, item.kannadaSound, 'kannada')}
+                    onClick={(e) => handleSpeak(e, item.kannada, 'kannada')}
                     className={`p-2 rounded-full transition-all duration-300 ${ttsSource === 'sarvam' ? 'bg-green-400/50 ring-2 ring-green-300' : ttsSource === 'browser' ? 'bg-orange-400/50 ring-2 ring-orange-300' : 'bg-white/20 hover:bg-white/30'}`}
                   >
                     <Volume2 className="w-6 h-6 text-white" />
@@ -459,7 +459,7 @@ const LanguageLearningApp = () => {
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <div className={`${selectedLanguage === 'all' ? 'text-4xl' : 'text-6xl'} font-bold text-white`}>{item.hindi}</div>
                   <button
-                    onClick={(e) => handleSpeak(e, item.hindiSound, 'hindi')}
+                    onClick={(e) => handleSpeak(e, item.hindi, 'hindi')}
                     className={`p-2 rounded-full transition-all duration-300 ${ttsSource === 'sarvam' ? 'bg-green-400/50 ring-2 ring-green-300' : ttsSource === 'browser' ? 'bg-orange-400/50 ring-2 ring-orange-300' : 'bg-white/20 hover:bg-white/30'}`}
                   >
                     <Volume2 className="w-6 h-6 text-white" />
@@ -474,7 +474,7 @@ const LanguageLearningApp = () => {
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <div className={`${selectedLanguage === 'all' ? 'text-4xl' : 'text-6xl'} font-bold text-white`}>{item.gujarati}</div>
                   <button
-                    onClick={(e) => handleSpeak(e, item.gujaratiSound, 'gujarati')}
+                    onClick={(e) => handleSpeak(e, item.gujarati, 'gujarati')}
                     className={`p-2 rounded-full transition-all duration-300 ${ttsSource === 'sarvam' ? 'bg-green-400/50 ring-2 ring-green-300' : ttsSource === 'browser' ? 'bg-orange-400/50 ring-2 ring-orange-300' : 'bg-white/20 hover:bg-white/30'}`}
                   >
                     <Volume2 className="w-6 h-6 text-white" />
