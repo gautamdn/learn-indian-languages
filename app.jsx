@@ -13,7 +13,7 @@ const Book = ({ className, size }) => <Icon className={className} size={size}>�
 const Gamepad2 = ({ className, size }) => <Icon className={className} size={size}>🎮</Icon>;
 const Trophy = ({ className, size }) => <Icon className={className} size={size}>🏆</Icon>;
 const CheckCircle = ({ className, size }) => <Icon className={className} size={size}>✅</Icon>;
-const RotateCcw = ({ className, size }) => <Icon className={className} size={size}>🔄</Icon>;
+
 
 const LanguageLearningApp = () => {
   const [currentView, setCurrentView] = useState('home');
@@ -193,6 +193,102 @@ const LanguageLearningApp = () => {
         { english: 'Rickshaw', kannada: 'ಆಟೋ', kannadaSound: 'auto', hindi: 'रिक्शा', hindiSound: 'rickshaw', gujarati: 'રિક્ષા', gujaratiSound: 'rikshaa', emoji: '🛺' },
       ]
     },
+    fruits: {
+      title: 'Fruits',
+      emoji: '🍇',
+      color: 'from-green-400 to-yellow-400',
+      items: [
+        { english: 'Apple', kannada: 'ಸೇಬು', kannadaSound: 'sebu', hindi: 'सेब', hindiSound: 'seb', gujarati: 'સફરજન', gujaratiSound: 'safarjan', emoji: '🍎' },
+        { english: 'Banana', kannada: 'ಬಾಳೆಹಣ್ಣು', kannadaSound: 'baalehaNNu', hindi: 'केला', hindiSound: 'kela', gujarati: 'કેળું', gujaratiSound: 'keLun', emoji: '🍌' },
+        { english: 'Mango', kannada: 'ಮಾವಿನಹಣ್ಣು', kannadaSound: 'maavinahaNNu', hindi: 'आम', hindiSound: 'aam', gujarati: 'કેરી', gujaratiSound: 'keri', emoji: '🥭' },
+        { english: 'Grapes', kannada: 'ದ್ರಾಕ್ಷಿ', kannadaSound: 'draakshi', hindi: 'अंगूर', hindiSound: 'angoor', gujarati: 'દ્રાક્ષ', gujaratiSound: 'draaksh', emoji: '🍇' },
+        { english: 'Watermelon', kannada: 'ಕಲ್ಲಂಗಡಿ', kannadaSound: 'kallangaDi', hindi: 'तरबूज', hindiSound: 'tarbooz', gujarati: 'તરબૂચ', gujaratiSound: 'tarbuuch', emoji: '🍉' },
+        { english: 'Orange', kannada: 'ಕಿತ್ತಳೆ', kannadaSound: 'kittaLe', hindi: 'संतरा', hindiSound: 'santra', gujarati: 'નારંગી', gujaratiSound: 'naarangi', emoji: '🍊' },
+        { english: 'Coconut', kannada: 'ತೆಂಗಿನಕಾಯಿ', kannadaSound: 'tenginakaayi', hindi: 'नारियल', hindiSound: 'naariyal', gujarati: 'નારિયેળ', gujaratiSound: 'naariyeL', emoji: '🥥' },
+        { english: 'Pineapple', kannada: 'ಅನಾನಸ್', kannadaSound: 'anaanas', hindi: 'अनानास', hindiSound: 'anaanaas', gujarati: 'અનાનાસ', gujaratiSound: 'anaanaas', emoji: '🍍' },
+        { english: 'Pomegranate', kannada: 'ದಾಳಿಂಬೆ', kannadaSound: 'daaLimbe', hindi: 'अनार', hindiSound: 'anaar', gujarati: 'દાડમ', gujaratiSound: 'daadam', emoji: '🫐' },
+        { english: 'Guava', kannada: 'ಪೇರಲೆ', kannadaSound: 'perale', hindi: 'अमरूद', hindiSound: 'amrood', gujarati: 'જામફળ', gujaratiSound: 'jaamfaL', emoji: '🍐' },
+      ]
+    },
+    shapes: {
+      title: 'Shapes',
+      emoji: '🔷',
+      color: 'from-indigo-400 to-blue-400',
+      items: [
+        { english: 'Circle', kannada: 'ವೃತ್ತ', kannadaSound: 'vrittha', hindi: 'गोल', hindiSound: 'gol', gujarati: 'વર્તુળ', gujaratiSound: 'vartuL', emoji: '⭕' },
+        { english: 'Square', kannada: 'ಚೌಕ', kannadaSound: 'chauka', hindi: 'वर्ग', hindiSound: 'varg', gujarati: 'ચોરસ', gujaratiSound: 'choras', emoji: '🟦' },
+        { english: 'Triangle', kannada: 'ತ್ರಿಕೋಣ', kannadaSound: 'trikona', hindi: 'त्रिभुज', hindiSound: 'tribhuj', gujarati: 'ત્રિકોણ', gujaratiSound: 'trikoN', emoji: '🔺' },
+        { english: 'Star', kannada: 'ನಕ್ಷತ್ರ', kannadaSound: 'nakshatra', hindi: 'तारा', hindiSound: 'taara', gujarati: 'તારો', gujaratiSound: 'taaro', emoji: '⭐' },
+        { english: 'Heart', kannada: 'ಹೃದಯ', kannadaSound: 'hridaya', hindi: 'दिल', hindiSound: 'dil', gujarati: 'હૃદય', gujaratiSound: 'hriday', emoji: '❤️' },
+        { english: 'Diamond', kannada: 'ವಜ್ರ', kannadaSound: 'vajra', hindi: 'हीरा', hindiSound: 'heera', gujarati: 'હીરો', gujaratiSound: 'heero', emoji: '🔷' },
+        { english: 'Moon', kannada: 'ಚಂದ್ರ', kannadaSound: 'chandra', hindi: 'चाँद', hindiSound: 'chaand', gujarati: 'ચંદ્ર', gujaratiSound: 'chandra', emoji: '🌙' },
+        { english: 'Ring', kannada: 'ಉಂಗುರ', kannadaSound: 'ungura', hindi: 'अंगूठी', hindiSound: 'angoothi', gujarati: 'વીંટી', gujaratiSound: 'viinTi', emoji: '💍' },
+      ]
+    },
+    nature: {
+      title: 'Nature',
+      emoji: '🌳',
+      color: 'from-emerald-400 to-green-400',
+      items: [
+        { english: 'Sun', kannada: 'ಸೂರ್ಯ', kannadaSound: 'soorya', hindi: 'सूरज', hindiSound: 'sooraj', gujarati: 'સૂરજ', gujaratiSound: 'sooraj', emoji: '☀️' },
+        { english: 'Moon', kannada: 'ಚಂದ್ರ', kannadaSound: 'chandra', hindi: 'चाँद', hindiSound: 'chaand', gujarati: 'ચંદ્ર', gujaratiSound: 'chandra', emoji: '🌙' },
+        { english: 'Star', kannada: 'ನಕ್ಷತ್ರ', kannadaSound: 'nakshatra', hindi: 'तारा', hindiSound: 'taara', gujarati: 'તારો', gujaratiSound: 'taaro', emoji: '🌟' },
+        { english: 'Rain', kannada: 'ಮಳೆ', kannadaSound: 'maLe', hindi: 'बारिश', hindiSound: 'baarish', gujarati: 'વરસાદ', gujaratiSound: 'varsaad', emoji: '🌧️' },
+        { english: 'Cloud', kannada: 'ಮೋಡ', kannadaSound: 'moDa', hindi: 'बादल', hindiSound: 'baadal', gujarati: 'વાદળ', gujaratiSound: 'vaadaL', emoji: '☁️' },
+        { english: 'Tree', kannada: 'ಮರ', kannadaSound: 'mara', hindi: 'पेड़', hindiSound: 'ped', gujarati: 'ઝાડ', gujaratiSound: 'jhaaD', emoji: '🌳' },
+        { english: 'Flower', kannada: 'ಹೂವು', kannadaSound: 'hoovu', hindi: 'फूल', hindiSound: 'phool', gujarati: 'ફૂલ', gujaratiSound: 'phool', emoji: '🌸' },
+        { english: 'River', kannada: 'ನದಿ', kannadaSound: 'nadi', hindi: 'नदी', hindiSound: 'nadi', gujarati: 'નદી', gujaratiSound: 'nadi', emoji: '🏞️' },
+        { english: 'Mountain', kannada: 'ಬೆಟ್ಟ', kannadaSound: 'beTTa', hindi: 'पहाड़', hindiSound: 'pahaad', gujarati: 'પર્વત', gujaratiSound: 'parvat', emoji: '⛰️' },
+        { english: 'Ocean', kannada: 'ಸಮುದ್ರ', kannadaSound: 'samudra', hindi: 'समुद्र', hindiSound: 'samudra', gujarati: 'સમુદ્ર', gujaratiSound: 'samudra', emoji: '🌊' },
+      ]
+    },
+    clothes: {
+      title: 'Clothes',
+      emoji: '👕',
+      color: 'from-pink-400 to-rose-400',
+      items: [
+        { english: 'Shirt', kannada: 'ಅಂಗಿ', kannadaSound: 'angi', hindi: 'कमीज़', hindiSound: 'kameez', gujarati: 'શર્ટ', gujaratiSound: 'sharT', emoji: '👕' },
+        { english: 'Pants', kannada: 'ಪ್ಯಾಂಟ್', kannadaSound: 'pant', hindi: 'पैंट', hindiSound: 'paint', gujarati: 'પેન્ટ', gujaratiSound: 'penT', emoji: '👖' },
+        { english: 'Shoes', kannada: 'ಚಪ್ಪಲಿ', kannadaSound: 'chappali', hindi: 'जूते', hindiSound: 'joote', gujarati: 'જૂતા', gujaratiSound: 'juutaa', emoji: '👟' },
+        { english: 'Hat', kannada: 'ಟೋಪಿ', kannadaSound: 'Topi', hindi: 'टोपी', hindiSound: 'Topi', gujarati: 'ટોપી', gujaratiSound: 'Topi', emoji: '🧢' },
+        { english: 'Dress', kannada: 'ಉಡುಗೆ', kannadaSound: 'uDuge', hindi: 'कपड़ा', hindiSound: 'kapda', gujarati: 'કપડું', gujaratiSound: 'kapDun', emoji: '👗' },
+        { english: 'Socks', kannada: 'ಕಾಲುಚೀಲ', kannadaSound: 'kaalucheela', hindi: 'मोज़े', hindiSound: 'moze', gujarati: 'મોજાં', gujaratiSound: 'mojaan', emoji: '🧦' },
+        { english: 'Jacket', kannada: 'ಜಾಕೆಟ್', kannadaSound: 'jaakeT', hindi: 'जैकेट', hindiSound: 'jaikeT', gujarati: 'જેકેટ', gujaratiSound: 'jekeT', emoji: '🧥' },
+        { english: 'Scarf', kannada: 'ಶಾಲು', kannadaSound: 'shaalu', hindi: 'दुपट्टा', hindiSound: 'dupatta', gujarati: 'ઓઢણી', gujaratiSound: 'oDhNi', emoji: '🧣' },
+      ]
+    },
+    actions: {
+      title: 'Actions',
+      emoji: '🏃',
+      color: 'from-amber-400 to-orange-400',
+      items: [
+        { english: 'Eat', kannada: 'ತಿನ್ನು', kannadaSound: 'tinnu', hindi: 'खाना', hindiSound: 'khaana', gujarati: 'ખાવું', gujaratiSound: 'khaavun', emoji: '🍽️' },
+        { english: 'Drink', kannada: 'ಕುಡಿ', kannadaSound: 'kuDi', hindi: 'पीना', hindiSound: 'peena', gujarati: 'પીવું', gujaratiSound: 'piivun', emoji: '🥤' },
+        { english: 'Sleep', kannada: 'ಮಲಗು', kannadaSound: 'malagu', hindi: 'सोना', hindiSound: 'sona', gujarati: 'ઊંઘવું', gujaratiSound: 'unghvun', emoji: '😴' },
+        { english: 'Run', kannada: 'ಓಡು', kannadaSound: 'oDu', hindi: 'दौड़ना', hindiSound: 'daudna', gujarati: 'દોડવું', gujaratiSound: 'doDvun', emoji: '🏃' },
+        { english: 'Play', kannada: 'ಆಟ', kannadaSound: 'aaTa', hindi: 'खेलना', hindiSound: 'khelna', gujarati: 'રમવું', gujaratiSound: 'ramvun', emoji: '🎮' },
+        { english: 'Dance', kannada: 'ಕುಣಿ', kannadaSound: 'kuNi', hindi: 'नाचना', hindiSound: 'naachna', gujarati: 'નાચવું', gujaratiSound: 'naachvun', emoji: '💃' },
+        { english: 'Sing', kannada: 'ಹಾಡು', kannadaSound: 'haaDu', hindi: 'गाना', hindiSound: 'gaana', gujarati: 'ગાવું', gujaratiSound: 'gaavun', emoji: '🎤' },
+        { english: 'Read', kannada: 'ಓದು', kannadaSound: 'oodu', hindi: 'पढ़ना', hindiSound: 'padhna', gujarati: 'વાંચવું', gujaratiSound: 'vaanchvun', emoji: '📖' },
+        { english: 'Write', kannada: 'ಬರೆ', kannadaSound: 'bare', hindi: 'लिखना', hindiSound: 'likhna', gujarati: 'લખવું', gujaratiSound: 'lakhvun', emoji: '✏️' },
+        { english: 'Jump', kannada: 'ಹಾರು', kannadaSound: 'haaru', hindi: 'कूदना', hindiSound: 'koodna', gujarati: 'કૂદવું', gujaratiSound: 'kuudvun', emoji: '🦘' },
+      ]
+    },
+    emotions: {
+      title: 'Emotions',
+      emoji: '😊',
+      color: 'from-yellow-400 to-pink-400',
+      items: [
+        { english: 'Happy', kannada: 'ಖುಷಿ', kannadaSound: 'khushi', hindi: 'खुश', hindiSound: 'khush', gujarati: 'ખુશ', gujaratiSound: 'khush', emoji: '😊' },
+        { english: 'Sad', kannada: 'ದುಃಖ', kannadaSound: 'dukha', hindi: 'उदास', hindiSound: 'udaas', gujarati: 'ઉદાસ', gujaratiSound: 'udaas', emoji: '😢' },
+        { english: 'Angry', kannada: 'ಕೋಪ', kannadaSound: 'kopa', hindi: 'गुस्सा', hindiSound: 'gussa', gujarati: 'ગુસ્સો', gujaratiSound: 'gusso', emoji: '😠' },
+        { english: 'Scared', kannada: 'ಭಯ', kannadaSound: 'bhaya', hindi: 'डर', hindiSound: 'dar', gujarati: 'ડર', gujaratiSound: 'Dar', emoji: '😨' },
+        { english: 'Surprised', kannada: 'ಆಶ್ಚರ್ಯ', kannadaSound: 'aashcharya', hindi: 'हैरान', hindiSound: 'hairaan', gujarati: 'આશ્ચર્ય', gujaratiSound: 'aashcharya', emoji: '😲' },
+        { english: 'Sleepy', kannada: 'ನಿದ್ರೆ', kannadaSound: 'nidre', hindi: 'नींद', hindiSound: 'neend', gujarati: 'ઊંઘ', gujaratiSound: 'ungh', emoji: '🥱' },
+        { english: 'Hungry', kannada: 'ಹಸಿವು', kannadaSound: 'hasivu', hindi: 'भूख', hindiSound: 'bhookh', gujarati: 'ભૂખ', gujaratiSound: 'bhuukh', emoji: '🤤' },
+        { english: 'Love', kannada: 'ಪ್ರೀತಿ', kannadaSound: 'preeti', hindi: 'प्यार', hindiSound: 'pyaar', gujarati: 'પ્રેમ', gujaratiSound: 'prem', emoji: '🥰' },
+      ]
+    },
   };
 
   const interestTags = [
@@ -202,16 +298,16 @@ const LanguageLearningApp = () => {
       words: [
         ['animals','Dog'],['animals','Cat'],['animals','Elephant'],['animals','Cow'],
         ['animals','Monkey'],['animals','Bird'],['animals','Fish'],['animals','Lion'],
-        ['animals','Tiger'],['animals','Rabbit'],['colors','Green'],['food','Water'],
+        ['animals','Tiger'],['animals','Rabbit'],['nature','Tree'],['nature','Flower'],
       ]
     },
     {
       id: 'yummy_food', emoji: '🍕', label: 'Yummy Food',
       color: 'from-orange-400 to-red-400',
       words: [
-        ['food','Rice'],['food','Milk'],['food','Banana'],['food','Apple'],
-        ['food','Bread'],['food','Mango'],['food','Chocolate'],['food','Ice Cream'],
-        ['food','Egg'],['food','Water'],['colors','Red'],['colors','Orange'],['colors','Yellow'],
+        ['food','Rice'],['food','Milk'],['food','Chocolate'],['food','Ice Cream'],
+        ['food','Egg'],['food','Bread'],['food','Water'],
+        ['fruits','Apple'],['fruits','Banana'],['fruits','Mango'],['fruits','Grapes'],['fruits','Watermelon'],
       ]
     },
     {
@@ -220,7 +316,7 @@ const LanguageLearningApp = () => {
       words: [
         ['vehicles','Car'],['vehicles','Bus'],['vehicles','Train'],['vehicles','Bicycle'],
         ['vehicles','Airplane'],['vehicles','Boat'],['vehicles','Rickshaw'],
-        ['colors','Red'],['colors','Blue'],['numbers','One'],['numbers','Two'],['numbers','Three'],
+        ['actions','Run'],['actions','Jump'],['actions','Play'],
       ]
     },
     {
@@ -230,25 +326,26 @@ const LanguageLearningApp = () => {
         ['family','Mother'],['family','Father'],['family','Sister'],['family','Brother'],
         ['family','Grandmother'],['family','Grandfather'],['family','Baby'],
         ['family','Uncle'],['family','Aunt'],['phrases','I Love You'],['phrases','Hello'],['phrases','Thank You'],
+        ['emotions','Happy'],['emotions','Love'],
       ]
     },
     {
-      id: 'numbers_colors', emoji: '🔢', label: 'Numbers & Colors',
+      id: 'numbers_shapes', emoji: '🔢', label: 'Numbers & Shapes',
       color: 'from-blue-400 to-purple-400',
       words: [
         ['numbers','One'],['numbers','Two'],['numbers','Three'],['numbers','Four'],
         ['numbers','Five'],['numbers','Six'],['numbers','Seven'],['numbers','Eight'],
-        ['numbers','Nine'],['numbers','Ten'],['colors','Red'],['colors','Blue'],
-        ['colors','Yellow'],['colors','Green'],['colors','Orange'],['colors','Purple'],['colors','Pink'],
+        ['numbers','Nine'],['numbers','Ten'],
+        ['shapes','Circle'],['shapes','Square'],['shapes','Triangle'],['shapes','Star'],['shapes','Heart'],
       ]
     },
     {
-      id: 'magic_words', emoji: '🌟', label: 'Magic Words',
-      color: 'from-purple-400 to-indigo-400',
+      id: 'outdoors', emoji: '🌈', label: 'Outdoors',
+      color: 'from-emerald-400 to-cyan-400',
       words: [
-        ['phrases','Hello'],['phrases','Thank You'],['phrases','I Love You'],
-        ['phrases','Good Morning'],['phrases','Good Night'],['phrases','Yes'],['phrases','No'],
-        ['family','Mother'],['family','Father'],['food','Water'],['food','Milk'],
+        ['nature','Sun'],['nature','Moon'],['nature','Star'],['nature','Rain'],['nature','Cloud'],
+        ['nature','Tree'],['nature','Flower'],['nature','River'],['nature','Mountain'],['nature','Ocean'],
+        ['colors','Blue'],['colors','Green'],['colors','Yellow'],
       ]
     },
     {
@@ -257,7 +354,16 @@ const LanguageLearningApp = () => {
       words: [
         ['body','Head'],['body','Eyes'],['body','Nose'],['body','Mouth'],['body','Hand'],
         ['body','Foot'],['body','Ear'],['body','Hair'],['body','Teeth'],['body','Stomach'],
-        ['colors','Brown'],['colors','Pink'],['colors','White'],
+        ['clothes','Shirt'],['clothes','Shoes'],['clothes','Hat'],
+      ]
+    },
+    {
+      id: 'feelings_actions', emoji: '💃', label: 'Feelings & Fun',
+      color: 'from-pink-400 to-purple-400',
+      words: [
+        ['emotions','Happy'],['emotions','Sad'],['emotions','Angry'],['emotions','Scared'],
+        ['emotions','Surprised'],['emotions','Love'],
+        ['actions','Dance'],['actions','Sing'],['actions','Play'],['actions','Jump'],['actions','Sleep'],
       ]
     },
   ];
@@ -490,85 +596,80 @@ const LanguageLearningApp = () => {
     );
   };
 
-  // Matching Game Component
-  const MatchingGame = ({ categoryKey }) => {
+  // Quiz Game Component - Listen and tap the right emoji
+  const QuizGame = ({ categoryKey }) => {
     const category = categories[categoryKey];
-    const [gameItems, setGameItems] = useState([]);
-    const [selectedCards, setSelectedCards] = useState([]);
-    const [matchedPairs, setMatchedPairs] = useState([]);
+    const [questions, setQuestions] = useState([]);
+    const [currentQ, setCurrentQ] = useState(0);
     const [score, setScore] = useState(0);
-    const [attempts, setAttempts] = useState(0);
+    const [answered, setAnswered] = useState(null); // null | 'correct' | 'wrong'
+    const [finished, setFinished] = useState(false);
+
+    const getQuizLang = () => {
+      if (selectedLanguage !== 'all') return selectedLanguage;
+      const langs = ['kannada', 'hindi', 'gujarati'];
+      return langs[Math.floor(Math.random() * langs.length)];
+    };
+
+    const initQuiz = () => {
+      const lang = getQuizLang();
+      const shuffled = [...category.items].sort(() => Math.random() - 0.5);
+      const picked = shuffled.slice(0, Math.min(6, shuffled.length));
+
+      const qs = picked.map((correct) => {
+        const others = category.items.filter(i => i.english !== correct.english)
+          .sort(() => Math.random() - 0.5).slice(0, 3);
+        const options = [correct, ...others].sort(() => Math.random() - 0.5);
+        return { correct, options, lang };
+      });
+
+      setQuestions(qs);
+      setCurrentQ(0);
+      setScore(0);
+      setAnswered(null);
+      setFinished(false);
+    };
+
+    useEffect(() => { initQuiz(); }, []);
+
+    const playQuestion = () => {
+      if (!questions[currentQ]) return;
+      const q = questions[currentQ];
+      speak(q.correct[q.lang], q.lang);
+    };
 
     useEffect(() => {
-      initializeGame();
-    }, []);
-
-    const getWordForLanguage = (item) => {
-      if (selectedLanguage === 'hindi') return { word: item.hindi, sound: item.hindiSound };
-      if (selectedLanguage === 'gujarati') return { word: item.gujarati, sound: item.gujaratiSound };
-      if (selectedLanguage === 'kannada') return { word: item.kannada, sound: item.kannadaSound };
-      const langs = ['kannada', 'hindi', 'gujarati'];
-      const pick = langs[Math.floor(Math.random() * langs.length)];
-      return { word: item[pick], sound: item[pick + 'Sound'] };
-    };
-
-    const initializeGame = () => {
-      // Take first 5 items and create pairs
-      const items = category.items.slice(0, 5);
-      const pairs = [];
-
-      items.forEach((item, idx) => {
-        const { word, sound } = getWordForLanguage(item);
-        pairs.push({ id: `emoji-${idx}`, type: 'emoji', emoji: item.emoji, matchId: idx });
-        pairs.push({
-          id: `word-${idx}`,
-          type: 'word',
-          word,
-          sound,
-          matchId: idx 
-        });
-      });
-      
-      setGameItems(pairs.sort(() => Math.random() - 0.5));
-      setSelectedCards([]);
-      setMatchedPairs([]);
-      setScore(0);
-      setAttempts(0);
-    };
-
-    const handleCardClick = (card) => {
-      if (selectedCards.length === 2 || matchedPairs.includes(card.matchId) || 
-          selectedCards.find(c => c.id === card.id)) {
-        return;
+      if (questions.length > 0 && !finished) {
+        const timer = setTimeout(playQuestion, 400);
+        return () => clearTimeout(timer);
       }
+    }, [currentQ, questions]);
 
-      const newSelected = [...selectedCards, card];
-      setSelectedCards(newSelected);
-
-      if (newSelected.length === 2) {
-        setAttempts(attempts + 1);
-        
-        if (newSelected[0].matchId === newSelected[1].matchId) {
-          // Match!
-          setMatchedPairs([...matchedPairs, card.matchId]);
-          setScore(score + 10);
-          setTimeout(() => setSelectedCards([]), 500);
-          
-          if (matchedPairs.length + 1 === 5) {
-            setTimeout(() => {
-              alert(`🎉 Great job! You matched all pairs in ${attempts + 1} attempts!`);
-            }, 600);
+    const handleAnswer = (item) => {
+      if (answered) return;
+      const q = questions[currentQ];
+      if (item.english === q.correct.english) {
+        setAnswered('correct');
+        setScore(score + 1);
+        setTimeout(() => {
+          if (currentQ + 1 >= questions.length) {
+            setFinished(true);
+          } else {
+            setCurrentQ(currentQ + 1);
+            setAnswered(null);
           }
-        } else {
-          // No match
-          setTimeout(() => setSelectedCards([]), 1000);
-        }
+        }, 1000);
+      } else {
+        setAnswered('wrong');
+        setTimeout(() => setAnswered(null), 800);
       }
     };
+
+    if (questions.length === 0) return null;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-200 via-pink-200 to-orange-200 p-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <button
               onClick={() => setCurrentView('home')}
@@ -577,56 +678,63 @@ const LanguageLearningApp = () => {
               ← Back
             </button>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">Matching Game</div>
-              <div className="text-lg text-purple-500">{category.title}</div>
+              <div className="text-2xl font-bold text-purple-600">{category.emoji} {category.title} Quiz</div>
+              <div className="text-purple-500">{currentQ + 1} / {questions.length}</div>
             </div>
-            <button
-              onClick={initializeGame}
-              className="bg-white px-6 py-3 rounded-full shadow-lg font-bold text-purple-600 hover:bg-purple-50 flex items-center gap-2"
-            >
-              <RotateCcw size={20} /> Reset
-            </button>
-          </div>
-
-          <div className="bg-white/50 rounded-2xl p-4 mb-6 flex justify-around text-center">
-            <div>
-              <div className="text-3xl font-bold text-purple-600">{score}</div>
-              <div className="text-sm text-purple-500">Score</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600">{attempts}</div>
-              <div className="text-sm text-purple-500">Attempts</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600">{matchedPairs.length}/5</div>
-              <div className="text-sm text-purple-500">Matched</div>
+            <div className="bg-white px-4 py-3 rounded-full shadow-lg font-bold text-yellow-600">
+              ⭐ {score}
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-4">
-            {gameItems.map((card) => {
-              const isSelected = selectedCards.find(c => c.id === card.id);
-              const isMatched = matchedPairs.includes(card.matchId);
-              
-              return (
-                <button
-                  key={card.id}
-                  onClick={() => handleCardClick(card)}
-                  disabled={isMatched}
-                  className={`aspect-square rounded-2xl shadow-lg text-2xl font-bold transition-all transform hover:scale-105
-                    ${isMatched ? 'bg-green-400 text-white opacity-50' : 
-                      isSelected ? 'bg-blue-400 text-white scale-105' : 
-                      'bg-white text-gray-800 hover:bg-gray-50'}`}
-                >
-                  {card.type === 'emoji' ? (
-                    <div className="text-6xl">{card.emoji}</div>
-                  ) : (
-                    <div className="text-2xl px-2">{card.word}</div>
-                  )}
+          {finished ? (
+            <div className="bg-white rounded-3xl shadow-2xl p-10 text-center">
+              <div className="text-8xl mb-6">{score === questions.length ? '🎉' : score >= questions.length / 2 ? '👏' : '💪'}</div>
+              <div className="text-4xl font-bold text-purple-600 mb-3">
+                {score === questions.length ? 'Perfect!' : score >= questions.length / 2 ? 'Great Job!' : 'Keep Trying!'}
+              </div>
+              <div className="text-2xl text-purple-500 mb-8">
+                You got {score} out of {questions.length} right!
+              </div>
+              <div className="flex gap-4 justify-center">
+                <button onClick={initQuiz}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:scale-105 transition-transform">
+                  Play Again
                 </button>
-              );
-            })}
-          </div>
+                <button onClick={() => setCurrentView('home')}
+                  className="bg-white text-purple-600 px-8 py-4 rounded-full text-xl font-bold shadow-lg border-2 border-purple-300 hover:scale-105 transition-transform">
+                  Home
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="bg-white rounded-3xl shadow-2xl p-8 mb-8 text-center">
+                <div className="text-lg text-purple-500 mb-3">Listen and tap the right picture!</div>
+                <button onClick={playQuestion}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:scale-105 transition-transform flex items-center gap-3 mx-auto">
+                  <Volume2 size={28} /> Hear the word
+                </button>
+                {answered === 'correct' && (
+                  <div className="mt-4 text-3xl font-bold text-green-500 animate-bounce">Correct! ⭐</div>
+                )}
+                {answered === 'wrong' && (
+                  <div className="mt-4 text-2xl font-bold text-red-400">Try again!</div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-5">
+                {questions[currentQ].options.map((item, i) => (
+                  <button key={i} onClick={() => handleAnswer(item)}
+                    className={`bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center gap-2 transition-all hover:scale-105 active:scale-95
+                      ${answered === 'correct' && item.english === questions[currentQ].correct.english ? 'ring-4 ring-green-400 bg-green-50' : ''}
+                      ${answered === 'wrong' && item.english !== questions[currentQ].correct.english ? '' : ''}`}>
+                    <div className="text-7xl">{item.emoji || <span style={{display:'inline-block', width:60, height:60, borderRadius:'50%', backgroundColor: item.color, border: '3px solid #ddd'}}></span>}</div>
+                    <div className="text-xl font-bold text-gray-700">{item.english}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -984,7 +1092,7 @@ const LanguageLearningApp = () => {
         <>
           {currentView === 'home' && <HomePage />}
           {currentView === 'progress' && <ProgressDashboard />}
-          {currentView.startsWith('game-') && <MatchingGame categoryKey={currentView.replace('game-', '')} />}
+          {currentView.startsWith('game-') && <QuizGame categoryKey={currentView.replace('game-', '')} />}
           {currentView !== 'home' && currentView !== 'progress' && !currentView.startsWith('game-') && (
             <CategoryView categoryKey={currentView} />
           )}
