@@ -1,6 +1,2 @@
-[build]
-  command = "# no build step"
-  publish = "."
-
 [functions]
   directory = "netlify/functions"
