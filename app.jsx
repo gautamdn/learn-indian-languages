@@ -1,5 +1,5 @@
 // app.jsx — LanguageLearningApp root. Wires engines, audio, persistence; handles view routing.
-const { useState, useEffect, useRef } = React;
+// Note: useState/useEffect/useRef are declared globally in data.jsx.
 
 const LanguageLearningApp = () => {
   const [view, setView] = useState('hub');     // 'hub' | 'story-intro' | 'scene:<id>' | 'story-finale'

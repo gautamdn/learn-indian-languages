@@ -1,5 +1,5 @@
 // scenes.jsx — Scene shell and (later) PalaceHub.
-const { useState, useEffect, useRef, useMemo } = React;
+// Note: useState/useEffect/useRef/useMemo are declared globally in data.jsx.
 
 // --- helpers ---
 const wordNative = (wordId, lang) => {

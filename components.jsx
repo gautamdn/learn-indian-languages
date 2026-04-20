@@ -1,5 +1,5 @@
 // components.jsx — shared UI primitives.
-const { useState, useEffect, useRef } = React;
+// Note: useState/useEffect/useRef are declared globally in data.jsx.
 
 // KavyaAvatar — the princess companion. v1 = emoji with frame + animation state.
 const KavyaAvatar = ({ state = 'idle', size = 80, className = '' }) => {
