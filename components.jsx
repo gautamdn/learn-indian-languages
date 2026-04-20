@@ -60,4 +60,108 @@ const LangPicker = ({ value, onChange }) => {
   );
 };
 
+// SparkleLayer — renders a pool of absolutely-positioned sparkle spans driven by CSS animation.
+// API: ref.emit(x, y) queues a particle at page coords within the layer's bounding box.
+const SparkleLayer = React.forwardRef((props, ref) => {
+  const [particles, setParticles] = useState([]);
+  const nextId = useRef(0);
+  React.useImperativeHandle(ref, () => ({
+    emit: (x, y) => {
+      const id = nextId.current++;
+      const dx = (Math.random() - 0.5) * 40;
+      const dy = -20 - Math.random() * 30;
+      setParticles(p => [...p, { id, x, y, dx, dy }]);
+      setTimeout(() => setParticles(p => p.filter(pt => pt.id !== id)), 700);
+    },
+    burst: (x, y, n = 8) => {
+      for (let i = 0; i < n; i++) {
+        setTimeout(() => {
+          const id = nextId.current++;
+          const a = (Math.PI * 2 * i) / n;
+          const dx = Math.cos(a) * 40;
+          const dy = Math.sin(a) * 40 - 10;
+          setParticles(p => [...p, { id, x, y, dx, dy }]);
+          setTimeout(() => setParticles(p => p.filter(pt => pt.id !== id)), 700);
+        }, i * 15);
+      }
+    },
+  }), []);
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {particles.map(pt => (
+        <span
+          key={pt.id}
+          style={{
+            position: 'absolute',
+            left: pt.x, top: pt.y,
+            fontSize: 20,
+            '--dx': pt.dx + 'px',
+            '--dy': pt.dy + 'px',
+            animation: 'sparkle-float 700ms ease-out forwards',
+          }}
+        >✨</span>
+      ))}
+    </div>
+  );
+});
+
+// Wand — follows pointer within a parent element. Calls onMove({x,y}) in local (parent) coordinates.
+// Caller handles collision (only Wand knows position; parent provides hit-test via onMove).
+const Wand = ({ parentRef, sparkleRef, onMove, onDown, onUp }) => {
+  const [pos, setPos] = useState({ x: -100, y: -100, visible: false });
+  const lastEmit = useRef(0);
+
+  useEffect(() => {
+    const el = parentRef.current;
+    if (!el) return;
+
+    const toLocal = (clientX, clientY) => {
+      const r = el.getBoundingClientRect();
+      return { x: clientX - r.left, y: clientY - r.top };
+    };
+
+    const handleMove = (clientX, clientY) => {
+      const { x, y } = toLocal(clientX, clientY);
+      setPos({ x, y, visible: true });
+      const now = performance.now();
+      if (now - lastEmit.current > 40 && sparkleRef.current) {
+        sparkleRef.current.emit(x, y);
+        lastEmit.current = now;
+      }
+      if (onMove) onMove({ x, y });
+    };
+
+    const onPointerDown = (e) => { if (onDown) onDown(); handleMove(e.clientX, e.clientY); };
+    const onPointerMove = (e) => { if (e.buttons || e.pointerType === 'touch') handleMove(e.clientX, e.clientY); };
+    const onPointerUp   = () => { if (onUp) onUp(); setPos(p => ({ ...p, visible: false })); };
+
+    el.addEventListener('pointerdown', onPointerDown);
+    el.addEventListener('pointermove', onPointerMove);
+    el.addEventListener('pointerup',   onPointerUp);
+    el.addEventListener('pointercancel', onPointerUp);
+    el.addEventListener('pointerleave', onPointerUp);
+
+    return () => {
+      el.removeEventListener('pointerdown', onPointerDown);
+      el.removeEventListener('pointermove', onPointerMove);
+      el.removeEventListener('pointerup',   onPointerUp);
+      el.removeEventListener('pointercancel', onPointerUp);
+      el.removeEventListener('pointerleave', onPointerUp);
+    };
+  }, [parentRef, sparkleRef, onMove, onDown, onUp]);
+
+  return (
+    <div
+      className="pointer-events-none absolute"
+      style={{
+        left: pos.x - 20, top: pos.y - 20,
+        opacity: pos.visible ? 1 : 0,
+        transition: 'opacity 120ms',
+        fontSize: 40,
+        textShadow: '0 0 10px gold',
+      }}
+    >🪄</div>
+  );
+};
+
 console.log('[components.jsx] primitives ready');
