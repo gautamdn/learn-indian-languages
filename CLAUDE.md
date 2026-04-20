@@ -108,7 +108,7 @@ The app is designed to grow with the user's daughter as she ages. New words, sce
 
 ## Development Workflow
 
-1. Edit `app.jsx` (or `index.html`)
+1. Edit the relevant file — `data.jsx` for content changes; `scenes.jsx` / `components.jsx` for UI; `engines.jsx` for logic.
 2. Open `index.html` in browser to test locally
 3. `git add` + `git commit` + `git push` to deploy
 
@@ -118,7 +118,7 @@ The app is designed to grow with the user's daughter as she ages. New words, sce
 - Purple primary theme (`purple-500`, `purple-600`)
 - Gradient backgrounds (`from-blue-200 via-purple-200 to-pink-200`)
 - Large touch targets for kids (rounded-full, big text, big emoji)
-- Custom CSS for card flip animations (`.perspective-1000`, `.backface-hidden`, `.rotate-y-180`) defined in a `<style jsx>` block at the bottom of the root component
+- Custom CSS keyframes (`sparkle-float`, `reveal-bounce`, `kavya-wave`, `kavya-dance`, `pop-in`) defined in the `<style>` block of `index.html`.
 
 ## Target Audience
 

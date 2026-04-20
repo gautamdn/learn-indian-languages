@@ -34,6 +34,7 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
   const mission = useMemo(() => MissionEngine.pickMission(sceneId, storyStep), [sceneId, storyStep]);
   const goldenTarget = useMemo(() => pickGoldenTarget(mission.targets), [mission]);
   const [revealed, setRevealed] = useState(() => new Set());
+  const inFlight = useRef(new Set());
   const [currentTarget, setCurrentTarget] = useState(mission.currentTarget());
   const [kavyaState, setKavyaState] = useState('wave');
   const [bubbleEnglish, setBubbleEnglish] = useState(`Can you find the ${WORDS[mission.currentTarget()].english.toLowerCase()}?`);
@@ -67,8 +68,15 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
     return { x: p.x * boxSize.w, y: p.y * boxSize.h };
   };
 
+  // Cleanup inFlight on unmount.
+  useEffect(() => () => { inFlight.current.clear(); }, []);
+
   const revealWord = (wordId) => {
-    if (revealed.has(wordId)) { AudioManager.speak(WORDS[wordId][lang], lang); return; }
+    if (revealed.has(wordId) || inFlight.current.has(wordId)) {
+      AudioManager.speak(WORDS[wordId][lang], lang);
+      return;
+    }
+    inFlight.current.add(wordId);
     setRevealed(prev => { const n = new Set(prev); n.add(wordId); return n; });
     ProgressStore.recordReveal(wordId, lang);
     AudioManager.speak(WORDS[wordId][lang], lang);
@@ -85,11 +93,13 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
       ProgressStore.addStars(1);
       setTimeout(() => {
         if (mission.isComplete()) {
+          inFlight.current.delete(wordId);
           setBubbleEnglish('Yay! Well done!');
           setKavyaState('dance');
           ProgressStore.addStars(3);
           setTimeout(() => { if (onMissionComplete) onMissionComplete(); }, 1500);
         } else {
+          inFlight.current.delete(wordId);
           const nt = mission.currentTarget();
           setCurrentTarget(nt);
           setBubbleEnglish(`Now find the ${WORDS[nt].english.toLowerCase()}!`);
@@ -98,6 +108,7 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
         }
       }, 300);
     } else {
+      inFlight.current.delete(wordId);
       setBubbleEnglish(`Oh, a ${WORDS[wordId].english.toLowerCase()}! But I still need the ${WORDS[mission.currentTarget()].english.toLowerCase()}!`);
     }
   };
@@ -174,6 +185,8 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
 // Props: lang, onLangChange, onEnterScene(sceneId), todayStory (nullable), onEnterStory
 const PalaceHub = ({ lang, onLangChange, onEnterScene, todayStory, onEnterStory }) => {
   const stars = ProgressStore.get().stars;
+  const today = new Date().toISOString().slice(0, 10);
+  const showStory = todayStory && ProgressStore.get().storiesCompleted[todayStory.id] !== today;
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-200 via-amber-100 to-green-200 p-4 relative overflow-hidden">
       <div className="flex justify-between items-start">
@@ -185,7 +198,7 @@ const PalaceHub = ({ lang, onLangChange, onEnterScene, todayStory, onEnterStory 
         <div className="text-8xl" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))' }}>🏰</div>
       </div>
 
-      {todayStory && (
+      {showStory && (
         <div
           onClick={onEnterStory}
           className="mt-4 mx-auto max-w-md bg-white rounded-2xl shadow-lg p-4 cursor-pointer active:scale-95 transition-transform"
