@@ -1,6 +1,9 @@
 // data.jsx — content bundle. Edit this file to add words, scenes, stories, friends.
 // See ADDING_CONTENT.md for the authoring patterns.
 
+// Expose React hooks as globals — declared ONCE here so later scripts don't redeclare.
+const { useState, useEffect, useRef, useMemo } = React;
+
 const CONTENT_VERSION = 2;
 
 const WORDS = {
