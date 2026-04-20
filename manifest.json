@@ -1,7 +1,7 @@
 {
   "name": "Learn Indian Languages",
   "short_name": "Indian Languages",
-  "description": "Interactive learning app for kids - Learn Kannada, Hindi, Gujarati and other Indian languages through fun games and flashcards",
+  "description": "Character-led language learning app for kids — Kannada, Hindi, Gujarati",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

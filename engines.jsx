@@ -1,0 +1,264 @@
+// engines.jsx — MissionEngine, StoryEngine, ProgressStore + in-browser tests.
+
+// -- Test runner (append tests via __test(name, fn); open index.html?test=1 to run) --
+const __TESTS = [];
+const __test = (name, fn) => __TESTS.push({ name, fn });
+const __assert = (cond, msg) => { if (!cond) throw new Error(msg || 'assertion failed'); };
+const __assertEq = (a, b, msg) => {
+  const sa = JSON.stringify(a), sb = JSON.stringify(b);
+  if (sa !== sb) throw new Error((msg || 'not equal') + `: ${sa} !== ${sb}`);
+};
+const __runTests = () => {
+  let pass = 0, fail = 0;
+  __TESTS.forEach(({ name, fn }) => {
+    try { fn(); console.log('%c✓ ' + name, 'color:#4caf50'); pass++; }
+    catch (e) { console.error('✗ ' + name + ': ' + e.message); fail++; }
+  });
+  console.log(`%c${pass} passed, ${fail} failed`, 'font-weight:bold');
+};
+if (new URLSearchParams(location.search).get('test') === '1') {
+  window.addEventListener('DOMContentLoaded', __runTests);
+}
+
+// -- ProgressStore --
+// Wraps localStorage for app progress. Handles v1 -> v2 migration.
+
+__test('ProgressStore: fresh install returns v2 defaults', () => {
+  localStorage.removeItem('indianLanguagesProgress');
+  const s = ProgressStore.load();
+  __assertEq(s.version, 2);
+  __assertEq(s.stars, 0);
+  __assertEq(s.language, 'kannada');
+  __assertEq(s.wordsRevealed, { kannada: {}, hindi: {}, gujarati: {} });
+});
+
+__test('ProgressStore: addStars persists', () => {
+  localStorage.removeItem('indianLanguagesProgress');
+  ProgressStore.load();
+  ProgressStore.addStars(3);
+  ProgressStore.addStars(2);
+  __assertEq(ProgressStore.load().stars, 5);
+});
+
+__test('ProgressStore: recordReveal increments per-language count', () => {
+  localStorage.removeItem('indianLanguagesProgress');
+  ProgressStore.load();
+  ProgressStore.recordReveal('elephant', 'kannada');
+  ProgressStore.recordReveal('elephant', 'kannada');
+  ProgressStore.recordReveal('elephant', 'hindi');
+  const s = ProgressStore.load();
+  __assertEq(s.wordsRevealed.kannada.elephant, 2);
+  __assertEq(s.wordsRevealed.hindi.elephant, 1);
+});
+
+__test('ProgressStore: v1 -> v2 migration carries stars + marks revealed words', () => {
+  localStorage.setItem('indianLanguagesProgress', JSON.stringify({
+    progress: { 'animals-0': true, 'animals-1': true },
+    totalStars: 12,
+  }));
+  const s = ProgressStore.load();
+  __assertEq(s.version, 2);
+  __assertEq(s.stars, 12);
+});
+
+const ProgressStore = (() => {
+  const KEY = 'indianLanguagesProgress';
+  const OLD_KEY = 'kannadaHindiProgress';
+
+  const makeDefaults = () => ({
+    version: 2,
+    stars: 0,
+    language: 'kannada',
+    wordsRevealed: { kannada: {}, hindi: {}, gujarati: {} },
+    sceneVisits: {},
+    storiesCompleted: {},
+    lastActive: new Date().toISOString().slice(0, 10),
+    dailyStreak: 0,
+  });
+
+  let cache = null;
+
+  const migrate = (raw) => {
+    if (!raw) return null;
+    try {
+      const obj = JSON.parse(raw);
+      if (obj && obj.version === 2) return obj;
+      // v1 shape: { progress: {cat-idx: true}, totalStars: N }
+      const migrated = makeDefaults();
+      if (typeof obj.totalStars === 'number') migrated.stars = obj.totalStars;
+      return migrated;
+    } catch (e) { return null; }
+  };
+
+  const save = () => { localStorage.setItem(KEY, JSON.stringify(cache)); };
+
+  const load = () => {
+    const raw = localStorage.getItem(KEY) || localStorage.getItem(OLD_KEY);
+    cache = migrate(raw) || makeDefaults();
+    save();
+    return { ...cache };
+  };
+
+  const get = () => cache ? { ...cache } : load();
+
+  const addStars = (n) => { if (!cache) load(); cache.stars += n; save(); };
+
+  const recordReveal = (wordId, lang) => {
+    if (!cache) load();
+    if (!cache.wordsRevealed[lang]) cache.wordsRevealed[lang] = {};
+    cache.wordsRevealed[lang][wordId] = (cache.wordsRevealed[lang][wordId] || 0) + 1;
+    save();
+  };
+
+  const recordSceneVisit = (sceneId) => {
+    if (!cache) load();
+    cache.sceneVisits[sceneId] = (cache.sceneVisits[sceneId] || 0) + 1;
+    save();
+  };
+
+  const markStoryComplete = (storyId) => {
+    if (!cache) load();
+    cache.storiesCompleted[storyId] = new Date().toISOString().slice(0, 10);
+    save();
+  };
+
+  const setLanguage = (lang) => { if (!cache) load(); cache.language = lang; save(); };
+
+  const touchDailyActive = () => {
+    if (!cache) load();
+    const today = new Date().toISOString().slice(0, 10);
+    if (cache.lastActive === today) return;
+    const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+    cache.dailyStreak = cache.lastActive === y ? (cache.dailyStreak + 1) : 1;
+    cache.lastActive = today;
+    save();
+  };
+
+  return { load, get, addStars, recordReveal, recordSceneVisit, markStoryComplete, setLanguage, touchDailyActive };
+})();
+
+// -- MissionEngine --
+
+__test('MissionEngine: pickMission returns 5 words from scene pool', () => {
+  const m = MissionEngine.pickMission('garden');
+  __assert(m.targets.length === 5, 'expected 5 targets');
+  const pool = SCENES.find(s => s.id === 'garden').words;
+  m.targets.forEach(t => __assert(pool.includes(t), t + ' not in pool'));
+});
+
+__test('MissionEngine: story-driven mission uses story target words', () => {
+  const storyStep = { scene: 'garden', targetWords: ['flower','mango','butterfly','tree','peacock'] };
+  const m = MissionEngine.pickMission('garden', storyStep);
+  __assertEq(m.targets.slice().sort(), ['butterfly','flower','mango','peacock','tree']);
+});
+
+__test('MissionEngine: advance cycles through targets and completes', () => {
+  const m = MissionEngine.pickMission('garden');
+  const seen = [];
+  for (let i = 0; i < 5; i++) { seen.push(m.currentTarget()); m.advance(); }
+  __assertEq(seen.length, 5);
+  __assert(m.isComplete(), 'should be complete after 5 advances');
+});
+
+__test('MissionEngine: wrong-reveal does not advance', () => {
+  const m = MissionEngine.pickMission('garden');
+  const target = m.currentTarget();
+  const wrong = SCENES.find(s => s.id === 'garden').words.find(w => w !== target);
+  const advanced = m.tryReveal(wrong);
+  __assert(advanced === false, 'tryReveal with wrong word should return false');
+  __assertEq(m.currentTarget(), target);
+});
+
+const MissionEngine = (() => {
+  const shuffle = (arr) => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  const pickMission = (sceneId, storyStep = null) => {
+    const scene = SCENES.find(s => s.id === sceneId);
+    if (!scene) throw new Error('unknown scene ' + sceneId);
+    let targets;
+    if (storyStep && storyStep.scene === sceneId && Array.isArray(storyStep.targetWords)) {
+      targets = storyStep.targetWords.slice(0, 5);
+    } else {
+      targets = shuffle(scene.words).slice(0, 5);
+    }
+    let idx = 0;
+    return {
+      sceneId,
+      targets,
+      currentTarget: () => targets[idx] || null,
+      advance: () => { idx = Math.min(idx + 1, targets.length); },
+      isComplete: () => idx >= targets.length,
+      tryReveal: (wordId) => {
+        if (targets[idx] === wordId) { idx += 1; return true; }
+        return false;
+      },
+      index: () => idx,
+    };
+  };
+
+  return { pickMission };
+})();
+
+// -- StoryEngine --
+
+__test('StoryEngine: todayStory returns a story from the library', () => {
+  const s = StoryEngine.todayStory();
+  __assert(STORIES.some(x => x.id === s.id), 'today story not in library');
+});
+
+__test('StoryEngine: todayStory is day-stable within the same day', () => {
+  const a = StoryEngine.todayStory().id;
+  const b = StoryEngine.todayStory().id;
+  __assertEq(a, b);
+});
+
+__test('StoryEngine: session tracks step progression', () => {
+  const story = STORIES[0];
+  const sess = StoryEngine.newSession(story.id);
+  __assertEq(sess.currentStep().scene, story.steps[0].scene);
+  sess.advance();
+  __assertEq(sess.currentStep().scene, story.steps[1].scene);
+  sess.advance(); sess.advance();
+  __assert(sess.isComplete(), 'session should be complete after all steps');
+});
+
+const StoryEngine = (() => {
+  // Simple string-hash seed for day-stable selection.
+  const hashStr = (s) => {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return Math.abs(h);
+  };
+
+  const todayStory = () => {
+    const idx = hashStr(new Date().toDateString()) % STORIES.length;
+    return STORIES[idx];
+  };
+
+  const newSession = (storyId) => {
+    const story = STORIES.find(s => s.id === storyId);
+    if (!story) throw new Error('unknown story ' + storyId);
+    let step = 0;
+    return {
+      storyId,
+      story,
+      currentStep: () => story.steps[step] || null,
+      stepIndex: () => step,
+      totalSteps: () => story.steps.length,
+      advance: () => { step = Math.min(step + 1, story.steps.length); },
+      isComplete: () => step >= story.steps.length,
+      intro: () => story.intro,
+      title: () => story.title,
+      finale: () => story.finale,
+    };
+  };
+
+  return { todayStory, newSession };
+})();

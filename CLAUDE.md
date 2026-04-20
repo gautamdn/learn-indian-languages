@@ -4,24 +4,22 @@ Interactive language learning app for kids. Built for my child to learn **Kannad
 
 ## Architecture
 
-Single-file React app with **no bundler or build step**. Everything runs via CDN scripts + Babel standalone transpilation in the browser.
+Six-file, no-bundler React app. Scripts are loaded in dependency order from `index.html`:
 
-- `index.html` — Entry point, loads CDN deps, contains loading spinner
-- `app.jsx` — Entire app (components, data, routing, styles). Loaded via `<script type="text/babel">`
-- `manifest.json` — PWA config
+```
+index.html
+  ├─ (CDN) React / ReactDOM / Tailwind / Babel standalone
+  ├─ data.jsx          — content bundle (SCENES, WORDS, FRIENDS, STORIES)
+  ├─ audio.jsx         — AudioManager (Sarvam + browser TTS fallback, prefetch cache)
+  ├─ engines.jsx       — MissionEngine, StoryEngine, ProgressStore + in-browser test runner
+  ├─ components.jsx    — KavyaAvatar, SpeechBubble, Wand, SparkleLayer, widgets
+  ├─ scenes.jsx        — Scene, PalaceHub, StoryIntro, StoryFinale
+  └─ app.jsx           — LanguageLearningApp root (view routing, wiring)
+```
 
-### CDN Dependencies (loaded as globals, NOT npm modules)
+All code uses globals — no `import`/`export`. Babel Standalone transpiles JSX in-browser.
 
-- **React 18 / ReactDOM 18** — `React` and `ReactDOM` are global. Use `const { useState, useEffect } = React;` — never `import` from `'react'`.
-- **Babel Standalone** — Transpiles JSX in-browser. Supports JSX but NOT ES module `import`/`export` syntax.
-- **Tailwind CSS** — Loaded via `cdn.tailwindcss.com` play CDN.
-
-### Critical Constraints
-
-- **No `import`/`export` statements.** Babel standalone does not support ES module resolution. All code must use globals.
-- **No npm packages.** Any library must be loaded via `<script>` tag in `index.html` and accessed as a global.
-- **Icons are emoji-based.** Lucide-react was removed; icon components use emoji (e.g., `const Star = () => <Icon>⭐</Icon>`).
-- **Single JSX file.** All components live in `app.jsx`. The file renders itself at the bottom: `ReactDOM.createRoot(document.getElementById('root')).render(<LanguageLearningApp />);`
+Tests run in-browser: open `index.html?test=1` to execute engine tests and see results in the console.
 
 ## Languages
 
@@ -48,50 +46,58 @@ Each vocabulary item follows this pattern:
 
 ### Language Selection
 
-`selectedLanguage` state controls which languages are shown. Values: `'all'`, `'kannada'`, `'hindi'`, `'gujarati'`. Default is `'all'`. A `<select>` dropdown in `CategoryView` lets users switch. The `speak()` function uses a language map to resolve TTS codes.
+`lang` state in `LanguageLearningApp` controls which language Kavya speaks. Values: `'kannada'`, `'hindi'`, `'gujarati'` — persisted via `ProgressStore.setLanguage`. The `LangPicker` widget in `PalaceHub` switches it. `AudioManager.LANG_MAP` resolves TTS codes.
 
 ### Adding More Languages
 
-Follow the same pattern: add `{lang}` and `{lang}Sound` fields to every item, add an `<option>` to the dropdown, add a conditional block in FlashCard, and update the `langMap` in `speak()`. See `ADDING_LANGUAGES.md` for reference.
+Add `{lang}` and `{lang}Sound` fields to every `WORDS` entry in `data.jsx`. Add an `<option>` in `LangPicker` (`components.jsx`). Add the language code to `AudioManager.LANG_MAP` (`audio.jsx`). See `ADDING_CONTENT.md` for the content pattern.
 
-## Categories
+## Scenes (replaces old categories)
 
-8 categories with ~10 words each: `animals`, `colors`, `numbers`, `family`, `body`, `food`, `phrases`, `vehicles`
+Five scenes mapped from the old 8 categories:
 
-## Key Components in app.jsx
+| Scene | Covers | Words |
+|-------|--------|-------|
+| 🌺 Garden | animals, colors, flowers | 10 |
+| 🍛 Kitchen | food, fruits | 10 |
+| 🛏️ Bedroom | body, numbers | 10 |
+| 👨‍👩‍👧 Family Room | family, greetings, dog | 10 |
+| 🛕 Courtyard | vehicles, weather, outdoors | 10 |
 
-- `LanguageLearningApp` — Root component, manages state and routing via `currentView`
-- `FlashCard` — Tap-to-flip card showing English front / translations back
-- `MatchingGame` — Memory card matching game (emoji ↔ word)
-- `CategoryView` — Practice view with flashcards + language dropdown
-- `ProgressDashboard` — Stats overview (stars, words learned, per-category bars)
-- `HomePage` — "For You" horizontal scroll strip, category grid, star count, tips for parents
-- `InterestPicker` — Full-screen interest tag selection (first launch + "Change Interests")
+Each scene has 10 words at fractional positions that scale to screen size. Missions pick 5 of 10 per visit (or the 5 specified by an active story).
+
+## Key Components
+
+- `LanguageLearningApp` (app.jsx) — root; view state (`hub` | `story-intro` | `scene:<id>` | `story-finale`)
+- `PalaceHub` (scenes.jsx) — home screen with 5 scene tiles, language picker, star count, today's story
+- `Scene` (scenes.jsx) — generic scene shell: wand, ghost/revealed objects, Kavya, mission HUD, collision
+- `StoryIntro`, `StoryFinale` (scenes.jsx) — story entry/exit cutscenes
+- `KavyaAvatar`, `SpeechBubble`, `Wand`, `SparkleLayer`, `LangPicker`, `StarCounter`, `BackButton` (components.jsx)
+- `MissionEngine`, `StoryEngine`, `ProgressStore` (engines.jsx) — plain JS modules, no React
 
 ## Routing
 
-No router library. `showInterestPicker` boolean takes priority (overlays everything). Otherwise `currentView` state string controls which component renders:
-- `'home'` → HomePage
-- `'progress'` → ProgressDashboard
-- `'game-{categoryKey}'` → MatchingGame
-- Any category key (e.g. `'animals'`) → CategoryView
-
-## Interest Tags
-
-7 curated interest tags (`interestTags` array) map cross-category word subsets. Each tag has `id`, `emoji`, `label`, `color`, and `words` (array of `[categoryKey, englishName]` pairs). `resolveInterestWords()` resolves references to actual item objects at runtime. The "For You" section on HomePage shows a deduplicated, day-stable-shuffled set of up to 20 cards from selected interests.
+No router library. `LanguageLearningApp.view` string:
+- `'hub'` → PalaceHub
+- `'story-intro'` → StoryIntro
+- `'scene:<sceneId>'` → Scene (with or without `storyStep`)
+- `'story-finale'` → StoryFinale
 
 ## Data Persistence
 
-Two `localStorage` keys:
-- `indianLanguagesProgress` — Progress, stars, streak (migrated from old `kannadaHindiProgress` key)
-- `indianLanguagesInterests` — Array of selected interest tag IDs
-
-```javascript
-// Progress
-{ progress: { "animals-0": true, ... }, totalStars: 25, dailyStreak: 5, lastUpdated: "..." }
-// Interests
-["animals_nature", "yummy_food", "my_family"]
+Single `localStorage` key `indianLanguagesProgress`, v2 schema:
+```js
+{
+  version: 2,
+  stars, language, wordsRevealed: { kannada, hindi, gujarati },
+  sceneVisits, storiesCompleted, lastActive, dailyStreak,
+}
 ```
+`ProgressStore.load()` migrates v1 → v2 on first load.
+
+## Content growth
+
+The app is designed to grow with the user's daughter as she ages. New words, scenes, stories, and friends are **pure data edits to `data.jsx`** — see `ADDING_CONTENT.md` for patterns.
 
 ## Deployment
 
@@ -102,7 +108,7 @@ Two `localStorage` keys:
 
 ## Development Workflow
 
-1. Edit `app.jsx` (or `index.html`)
+1. Edit the relevant file — `data.jsx` for content changes; `scenes.jsx` / `components.jsx` for UI; `engines.jsx` for logic.
 2. Open `index.html` in browser to test locally
 3. `git add` + `git commit` + `git push` to deploy
 
@@ -112,7 +118,7 @@ Two `localStorage` keys:
 - Purple primary theme (`purple-500`, `purple-600`)
 - Gradient backgrounds (`from-blue-200 via-purple-200 to-pink-200`)
 - Large touch targets for kids (rounded-full, big text, big emoji)
-- Custom CSS for card flip animations (`.perspective-1000`, `.backface-hidden`, `.rotate-y-180`) defined in a `<style jsx>` block at the bottom of the root component
+- Custom CSS keyframes (`sparkle-float`, `reveal-bounce`, `kavya-wave`, `kavya-dance`, `pop-in`) defined in the `<style>` block of `index.html`.
 
 ## Target Audience
 
