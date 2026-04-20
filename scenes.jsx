@@ -195,4 +195,57 @@ const PalaceHub = ({ lang, onLangChange, onEnterScene, todayStory, onEnterStory 
   );
 };
 
-console.log('[scenes.jsx] Scene + PalaceHub ready');
+// StoryIntro — opens with Kavya speaking the story setup; "Let's start!" advances.
+const StoryIntro = ({ story, lang, onBegin, onSkip }) => (
+  <div className="min-h-screen bg-gradient-to-b from-purple-300 to-pink-300 flex flex-col items-center justify-center p-6">
+    <div className="text-8xl mb-6">👸🏽</div>
+    <div className="bg-white rounded-3xl shadow-2xl p-6 max-w-lg text-center">
+      <div className="text-xs font-bold uppercase tracking-widest text-purple-600">Today's Story</div>
+      <h2 className="text-2xl font-bold mt-2">{story.title}</h2>
+      <p className="mt-3 text-gray-700 leading-relaxed">{story.intro}</p>
+      <div className="mt-5 flex flex-col gap-3">
+        <button
+          onClick={onBegin}
+          className="bg-purple-600 text-white font-bold py-4 px-6 rounded-full shadow-lg active:scale-95 transition-transform text-lg"
+        >Let's start! ✨</button>
+        <button
+          onClick={onSkip}
+          className="text-purple-600 font-semibold py-2"
+        >Maybe later</button>
+      </div>
+    </div>
+  </div>
+);
+
+// StoryFinale — plays after last story step. Uses story.finale as a lightweight scene tag.
+const FINALES = {
+  'cake-dance':      { emoji: '🎂', line: "We made it! Happy birthday!",    bg: 'from-pink-300 to-yellow-200' },
+  'scooby-reunion':  { emoji: '🐕', line: "Scooby! I found you!",           bg: 'from-amber-200 to-green-200' },
+  'tiara-found':     { emoji: '👑', line: "My tiara! You found it!",         bg: 'from-yellow-200 to-purple-200' },
+  'friends-dance':   { emoji: '💃', line: "Let's all dance together!",      bg: 'from-pink-200 to-blue-200' },
+  'fireworks':       { emoji: '🎆', line: "Look at the fireworks!",          bg: 'from-indigo-300 to-purple-400' },
+};
+
+const StoryFinale = ({ story, onDone }) => {
+  const f = FINALES[story.finale] || { emoji: '🎉', line: 'Hooray!', bg: 'from-pink-200 to-yellow-100' };
+  useEffect(() => {
+    ProgressStore.addStars(10);
+    ProgressStore.markStoryComplete(story.id);
+  }, []); // eslint-disable-line
+  return (
+    <div className={`min-h-screen bg-gradient-to-b ${f.bg} flex flex-col items-center justify-center p-6`}>
+      <div className="text-9xl" style={{ animation: 'pop-in 500ms ease-out' }}>{f.emoji}</div>
+      <div className="mt-6 bg-white rounded-3xl shadow-xl p-5 max-w-md text-center">
+        <div className="text-2xl font-bold text-gray-800">{story.title}</div>
+        <div className="text-gray-700 mt-2 text-lg">{f.line}</div>
+        <div className="mt-4 text-purple-600 font-bold">+10 ⭐</div>
+        <button
+          onClick={onDone}
+          className="mt-4 bg-purple-600 text-white font-bold py-3 px-6 rounded-full shadow active:scale-95 transition-transform"
+        >Back to Palace</button>
+      </div>
+    </div>
+  );
+};
+
+console.log('[scenes.jsx] Scene + PalaceHub + StoryIntro + StoryFinale ready');
