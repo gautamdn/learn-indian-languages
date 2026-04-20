@@ -46,11 +46,11 @@ Each vocabulary item follows this pattern:
 
 ### Language Selection
 
-`selectedLanguage` state controls which languages are shown. Values: `'all'`, `'kannada'`, `'hindi'`, `'gujarati'`. Default is `'all'`. A `<select>` dropdown in `CategoryView` lets users switch. The `speak()` function uses a language map to resolve TTS codes.
+`lang` state in `LanguageLearningApp` controls which language Kavya speaks. Values: `'kannada'`, `'hindi'`, `'gujarati'` — persisted via `ProgressStore.setLanguage`. The `LangPicker` widget in `PalaceHub` switches it. `AudioManager.LANG_MAP` resolves TTS codes.
 
 ### Adding More Languages
 
-Follow the same pattern: add `{lang}` and `{lang}Sound` fields to every item, add an `<option>` to the dropdown, add a conditional block in FlashCard, and update the `langMap` in `speak()`. See `ADDING_LANGUAGES.md` for reference.
+Add `{lang}` and `{lang}Sound` fields to every `WORDS` entry in `data.jsx`. Add an `<option>` in `LangPicker` (`components.jsx`). Add the language code to `AudioManager.LANG_MAP` (`audio.jsx`). See `ADDING_CONTENT.md` for the content pattern.
 
 ## Scenes (replaces old categories)
 
