@@ -146,4 +146,53 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
   );
 };
 
-console.log('[scenes.jsx] Scene ready');
+// PalaceHub — home screen with 5 scene tiles, Kavya greeter, language picker, stars.
+// Props: lang, onLangChange, onEnterScene(sceneId), todayStory (nullable), onEnterStory
+const PalaceHub = ({ lang, onLangChange, onEnterScene, todayStory, onEnterStory }) => {
+  const stars = ProgressStore.get().stars;
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-pink-200 via-amber-100 to-green-200 p-4 relative overflow-hidden">
+      <div className="flex justify-between items-start">
+        <LangPicker value={lang} onChange={onLangChange} />
+        <StarCounter count={stars} />
+      </div>
+
+      <div className="flex justify-center mt-4">
+        <div className="text-8xl" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))' }}>🏰</div>
+      </div>
+
+      {todayStory && (
+        <div
+          onClick={onEnterStory}
+          className="mt-4 mx-auto max-w-md bg-white rounded-2xl shadow-lg p-4 cursor-pointer active:scale-95 transition-transform"
+        >
+          <div className="text-xs font-bold text-purple-600 uppercase tracking-wide">Today's Story</div>
+          <div className="text-lg font-bold text-gray-800 mt-1">{todayStory.title}</div>
+          <div className="text-sm text-gray-600 mt-1">{todayStory.intro}</div>
+          <div className="text-sm font-bold text-purple-600 mt-2">Tap to begin →</div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-4 mt-6 max-w-md mx-auto">
+        {SCENES.map(s => (
+          <button
+            key={s.id}
+            onClick={() => onEnterScene(s.id)}
+            className="bg-white rounded-2xl shadow-lg p-5 flex flex-col items-center active:scale-95 transition-transform"
+            style={{ minHeight: 120 }}
+          >
+            <div className="text-5xl">{s.emoji}</div>
+            <div className="mt-2 font-bold text-gray-800">{s.label}</div>
+          </button>
+        ))}
+      </div>
+
+      <div className="absolute bottom-4 left-4 flex items-end gap-3">
+        <KavyaAvatar state="wave" size={96} />
+        <SpeechBubble english="Namaste! Where to?" native={wordNative('namaste', lang).text} className="mb-4" />
+      </div>
+    </div>
+  );
+};
+
+console.log('[scenes.jsx] Scene + PalaceHub ready');

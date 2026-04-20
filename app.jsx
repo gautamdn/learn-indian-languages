@@ -2,12 +2,17 @@
 const { useState, useEffect, useRef } = React;
 
 const LanguageLearningApp = () => {
-  const [view, setView] = useState('scene');
+  const [lang, setLang] = useState('kannada');
   useEffect(() => { ProgressStore.load(); }, []);
-  if (view === 'scene') {
-    return <Scene sceneId="garden" lang="kannada" onExit={() => setView('done')} onMissionComplete={() => setView('done')} />;
-  }
-  return <div className="min-h-screen flex items-center justify-center text-3xl">✅ Mission complete or exited</div>;
+  return (
+    <PalaceHub
+      lang={lang}
+      onLangChange={(l) => { setLang(l); ProgressStore.setLanguage(l); }}
+      onEnterScene={(id) => alert('enter ' + id)}
+      todayStory={StoryEngine.todayStory()}
+      onEnterStory={() => alert('story: ' + StoryEngine.todayStory().title)}
+    />
+  );
 };
 
 ReactDOM.createRoot(document.getElementById('root')).render(<LanguageLearningApp />);
