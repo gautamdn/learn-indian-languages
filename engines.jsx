@@ -205,3 +205,60 @@ const MissionEngine = (() => {
 
   return { pickMission };
 })();
+
+// -- StoryEngine --
+
+__test('StoryEngine: todayStory returns a story from the library', () => {
+  const s = StoryEngine.todayStory();
+  __assert(STORIES.some(x => x.id === s.id), 'today story not in library');
+});
+
+__test('StoryEngine: todayStory is day-stable within the same day', () => {
+  const a = StoryEngine.todayStory().id;
+  const b = StoryEngine.todayStory().id;
+  __assertEq(a, b);
+});
+
+__test('StoryEngine: session tracks step progression', () => {
+  const story = STORIES[0];
+  const sess = StoryEngine.newSession(story.id);
+  __assertEq(sess.currentStep().scene, story.steps[0].scene);
+  sess.advance();
+  __assertEq(sess.currentStep().scene, story.steps[1].scene);
+  sess.advance(); sess.advance();
+  __assert(sess.isComplete(), 'session should be complete after all steps');
+});
+
+const StoryEngine = (() => {
+  // Simple string-hash seed for day-stable selection.
+  const hashStr = (s) => {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return Math.abs(h);
+  };
+
+  const todayStory = () => {
+    const idx = hashStr(new Date().toDateString()) % STORIES.length;
+    return STORIES[idx];
+  };
+
+  const newSession = (storyId) => {
+    const story = STORIES.find(s => s.id === storyId);
+    if (!story) throw new Error('unknown story ' + storyId);
+    let step = 0;
+    return {
+      storyId,
+      story,
+      currentStep: () => story.steps[step] || null,
+      stepIndex: () => step,
+      totalSteps: () => story.steps.length,
+      advance: () => { step = Math.min(step + 1, story.steps.length); },
+      isComplete: () => step >= story.steps.length,
+      intro: () => story.intro,
+      title: () => story.title,
+      finale: () => story.finale,
+    };
+  };
+
+  return { todayStory, newSession };
+})();
