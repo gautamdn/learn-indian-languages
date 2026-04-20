@@ -136,3 +136,72 @@ const ProgressStore = (() => {
 
   return { load, get, addStars, recordReveal, recordSceneVisit, markStoryComplete, setLanguage, touchDailyActive };
 })();
+
+// -- MissionEngine --
+
+__test('MissionEngine: pickMission returns 5 words from scene pool', () => {
+  const m = MissionEngine.pickMission('garden');
+  __assert(m.targets.length === 5, 'expected 5 targets');
+  const pool = SCENES.find(s => s.id === 'garden').words;
+  m.targets.forEach(t => __assert(pool.includes(t), t + ' not in pool'));
+});
+
+__test('MissionEngine: story-driven mission uses story target words', () => {
+  const storyStep = { scene: 'garden', targetWords: ['flower','mango','butterfly','tree','peacock'] };
+  const m = MissionEngine.pickMission('garden', storyStep);
+  __assertEq(m.targets.slice().sort(), ['butterfly','flower','mango','peacock','tree']);
+});
+
+__test('MissionEngine: advance cycles through targets and completes', () => {
+  const m = MissionEngine.pickMission('garden');
+  const seen = [];
+  for (let i = 0; i < 5; i++) { seen.push(m.currentTarget()); m.advance(); }
+  __assertEq(seen.length, 5);
+  __assert(m.isComplete(), 'should be complete after 5 advances');
+});
+
+__test('MissionEngine: wrong-reveal does not advance', () => {
+  const m = MissionEngine.pickMission('garden');
+  const target = m.currentTarget();
+  const wrong = SCENES.find(s => s.id === 'garden').words.find(w => w !== target);
+  const advanced = m.tryReveal(wrong);
+  __assert(advanced === false, 'tryReveal with wrong word should return false');
+  __assertEq(m.currentTarget(), target);
+});
+
+const MissionEngine = (() => {
+  const shuffle = (arr) => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  const pickMission = (sceneId, storyStep = null) => {
+    const scene = SCENES.find(s => s.id === sceneId);
+    if (!scene) throw new Error('unknown scene ' + sceneId);
+    let targets;
+    if (storyStep && storyStep.scene === sceneId && Array.isArray(storyStep.targetWords)) {
+      targets = storyStep.targetWords.slice(0, 5);
+    } else {
+      targets = shuffle(scene.words).slice(0, 5);
+    }
+    let idx = 0;
+    return {
+      sceneId,
+      targets,
+      currentTarget: () => targets[idx] || null,
+      advance: () => { idx = Math.min(idx + 1, targets.length); },
+      isComplete: () => idx >= targets.length,
+      tryReveal: (wordId) => {
+        if (targets[idx] === wordId) { idx += 1; return true; }
+        return false;
+      },
+      index: () => idx,
+    };
+  };
+
+  return { pickMission };
+})();
