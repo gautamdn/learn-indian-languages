@@ -10,6 +10,21 @@ const wordNative = (wordId, lang) => {
 
 const HIT_RADIUS = 60; // px — generous for a 4yo
 
+// Time-of-day palette tint (applied on top of scene.bg).
+const timeOfDayTint = () => {
+  const h = new Date().getHours();
+  if (h < 7)  return 'brightness(0.85) hue-rotate(-10deg)';
+  if (h < 12) return 'brightness(1.05)';
+  if (h < 17) return 'brightness(1.0)';
+  if (h < 20) return 'brightness(0.95) sepia(0.1)';
+  return 'brightness(0.75) hue-rotate(-15deg)';
+};
+
+// Golden roll — 20% chance that one of the targets becomes golden.
+const pickGoldenTarget = (targets) => (Math.random() < 0.2
+  ? targets[Math.floor(Math.random() * targets.length)]
+  : null);
+
 // --- Scene ---
 // Props: sceneId, lang, storyStep (nullable), onExit, onMissionComplete
 const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) => {
@@ -17,6 +32,7 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
   const parentRef = useRef(null);
   const sparkleRef = useRef(null);
   const mission = useMemo(() => MissionEngine.pickMission(sceneId, storyStep), [sceneId, storyStep]);
+  const goldenTarget = useMemo(() => pickGoldenTarget(mission.targets), [mission]);
   const [revealed, setRevealed] = useState(() => new Set());
   const [currentTarget, setCurrentTarget] = useState(mission.currentTarget());
   const [kavyaState, setKavyaState] = useState('wave');
@@ -56,6 +72,10 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
     setRevealed(prev => { const n = new Set(prev); n.add(wordId); return n; });
     ProgressStore.recordReveal(wordId, lang);
     AudioManager.speak(WORDS[wordId][lang], lang);
+    if (wordId === goldenTarget) {
+      ProgressStore.addStars(3);
+      if (sparkleRef.current) sparkleRef.current.burst(posOf(wordId).x, posOf(wordId).y, 20);
+    }
     const { x, y } = posOf(wordId);
     if (sparkleRef.current) sparkleRef.current.burst(x, y, 12);
 
@@ -98,7 +118,8 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
   const nativeTarget = target ? `${target.emoji} ${target[lang]}` : '';
 
   return (
-    <div className={`relative w-full h-screen bg-gradient-to-b ${scene.bg} overflow-hidden select-none touch-none`}>
+    <div className={`relative w-full h-screen bg-gradient-to-b ${scene.bg} overflow-hidden select-none touch-none`}
+         style={{ filter: timeOfDayTint() }}>
       <div className="absolute top-4 left-4 z-20"><BackButton onClick={onExit} /></div>
       <div className="absolute top-4 right-4 z-20 flex gap-2 items-center">
         <StarCounter count={ProgressStore.get().stars} />
@@ -117,6 +138,7 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
         {scene.words.map(wordId => {
           const p = posOf(wordId);
           const isRevealed = revealed.has(wordId);
+          const isGolden = wordId === goldenTarget;
           return (
             <div
               key={wordId}
@@ -129,6 +151,8 @@ const Scene = ({ sceneId, lang, storyStep = null, onExit, onMissionComplete }) =
                 opacity: isRevealed ? 1 : 0.25,
                 filter: isRevealed ? 'none' : 'grayscale(1)',
                 animation: isRevealed ? 'reveal-bounce 400ms ease-out' : 'none',
+                boxShadow: (isGolden && !isRevealed) ? '0 0 30px 8px gold' : 'none',
+                borderRadius: '50%',
                 transition: 'opacity 200ms',
               }}
             >{WORDS[wordId].emoji}</div>
@@ -174,17 +198,26 @@ const PalaceHub = ({ lang, onLangChange, onEnterScene, todayStory, onEnterStory 
       )}
 
       <div className="grid grid-cols-2 gap-4 mt-6 max-w-md mx-auto">
-        {SCENES.map(s => (
-          <button
-            key={s.id}
-            onClick={() => onEnterScene(s.id)}
-            className="bg-white rounded-2xl shadow-lg p-5 flex flex-col items-center active:scale-95 transition-transform"
-            style={{ minHeight: 120 }}
-          >
-            <div className="text-5xl">{s.emoji}</div>
-            <div className="mt-2 font-bold text-gray-800">{s.label}</div>
-          </button>
-        ))}
+        {SCENES.map(s => {
+          const visits = ProgressStore.get().sceneVisits[s.id] || 0;
+          const unlocked = visits >= 3;
+          return (
+            <button
+              key={s.id}
+              onClick={() => onEnterScene(s.id)}
+              className="bg-white rounded-2xl shadow-lg p-5 flex flex-col items-center active:scale-95 transition-transform relative"
+              style={{ minHeight: 120 }}
+            >
+              <div className="text-5xl">{s.emoji}</div>
+              <div className="mt-2 font-bold text-gray-800">{s.label}</div>
+              {unlocked && (
+                <div className="absolute -top-2 -right-2 bg-gradient-to-br from-pink-400 to-purple-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">
+                  🫧 Bubble Pop!
+                </div>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       <div className="absolute bottom-4 left-4 flex items-end gap-3">
